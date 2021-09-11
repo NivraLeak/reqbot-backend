@@ -18,4 +18,7 @@ router.put('/:id', usuarioController.update);
 // Delete a usuario with id
 router.delete('/:id', usuarioController.delete);
 
+//login
+router.post('/login',usuarioController.login);
+
 module.exports = router

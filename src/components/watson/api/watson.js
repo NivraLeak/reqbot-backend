@@ -17,20 +17,20 @@ router.use(cors())
 // 2. Create Instance of Assistant
 
 // 2.1 First authenticate
-const authenticator = new IamAuthenticator({
-  apikey: process.env.WATSON_ASSISTANT_APIKEY,
-});
+//const authenticator = new IamAuthenticator({
+//  apikey: process.env.WATSON_ASSISTANT_APIKEY,
+//});
 
 // 2.2 Connect to assistant
-const assistant = new AssistantV2({
-  version: "2021-08-21",
-  authenticator: authenticator,
-  url: process.env.WATSON_ASSISTANT_URL,
-});
+//const assistant = new AssistantV2({
+//  version: "2021-08-21",
+//  authenticator: authenticator,
+//  url: process.env.WATSON_ASSISTANT_URL,
+//});
 
 // 3. Route to Handle Session Tokens
 // GET /api/watson/session
-router.get("/session", async (req, res) => {
+/*router.get("/session", async (req, res) => {
   // If successs
   try {
     const session = await assistant.createSession({
@@ -44,7 +44,7 @@ router.get("/session", async (req, res) => {
     console.log(err);
   }
 });
-
+*/
 
 
 // 4. Handle Messages
@@ -70,8 +70,8 @@ router.post("/message", async (req, res) => {
     };
 
     // If successs
-    const ibmRes = await assistant.message(payload);
-    const ibmMessage = ibmRes["result"].output.generic[0].text;
+    //const ibmRes = await assistant.message(payload);
+    //const ibmMessage = ibmRes["result"].output.generic[0].text;
     // Translate for user
     const finalRes = await axios.post("https://libretranslate.de/translate", {
       q: ibmMessage,

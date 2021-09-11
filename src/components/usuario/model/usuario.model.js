@@ -78,5 +78,14 @@ Usuario.delete = function (id, result) {
     });
 };
 
-
+Usuario.findByCorreo = function (correo, result) {
+    dbConn.query("Select * from usuario where correo = ? ",correo,function (err,res) {
+        if(err){
+            console.log("Error in Find by Correo: " + err);
+            result(null, err);
+        }else {
+            result(null,res);
+        }
+    })
+}
 module.exports = Usuario;

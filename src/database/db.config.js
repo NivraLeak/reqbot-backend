@@ -4,7 +4,7 @@ var dbConn = mysql.createConnection({
   host: "localhost",
   database: "bdreqbot",
   user: "root",
-  password: "root"
+  password: "13791924"
 });
 
 dbConn.connect(function(err) {
