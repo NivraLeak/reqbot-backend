@@ -2,15 +2,20 @@
 const express = require('express')
 const router = express.Router()
 const usuarioController = require('../controller/usuario.controller');
+const {authAdmin} = require("../../auth/auth");
+
+//login
+router.post('/login',usuarioController.login);
+//logOut
+router.get('/logout',usuarioController.logOut);
 
 // Create a new usuario
 router.post('/', usuarioController.create);
-
+// Retrieve a single usuario with id and verification rol Administrador
+router.get('/:id',authAdmin, usuarioController.findById);
 // Retrieve all usuario
 router.get('/', usuarioController.findAll);
 
-// Retrieve a single usuario with id
-router.get('/:id', usuarioController.findById);
 
 // Update a usuario with id
 router.put('/:id', usuarioController.update);
@@ -18,7 +23,6 @@ router.put('/:id', usuarioController.update);
 // Delete a usuario with id
 router.delete('/:id', usuarioController.delete);
 
-//login
-router.post('/login',usuarioController.login);
+
 
 module.exports = router

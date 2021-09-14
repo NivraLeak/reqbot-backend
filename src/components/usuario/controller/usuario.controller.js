@@ -1,6 +1,6 @@
 'use strict';
 
-const Usuario = require('../model/usuario.model');
+const {Usuario} = require('../model/usuario.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 exports.create = async function (req, res) {
@@ -33,8 +33,11 @@ exports.login = async function (req, res) {
         try {
             const match = await bcrypt.compare(req.body.contrasenia, user.contrasenia);
             const accessToken = jwt.sign(JSON.stringify(user), "my secret key");
-            console.log(accessToken)
+            //console.log(accessToken)
+            console.log(req.session)
             if (match) {
+                req.session.user = usuario[0]
+                req.session.accessToken = accessToken
                 res.json({
                     message: "Success",
                     accessToken: accessToken,
@@ -54,6 +57,14 @@ exports.login = async function (req, res) {
     })
 }
 
+exports.logOut = function (req,res) {
+    req.session.destroy()
+    console.log("SESSIONNNNNNNN")
+    console.log(req.session)
+    res.send({
+        message: "Log out"
+    })
+}
 exports.findAll = function(req, res) {
     Usuario.findAll(function(err, usuario) {
     console.log('controller')
@@ -66,6 +77,7 @@ exports.findAll = function(req, res) {
 };
 
 exports.findById = function(req, res) {
+
     Usuario.findById(req.params.id, function(err, usuario) {
         if (err)
         res.send(err);
@@ -95,3 +107,4 @@ exports.delete = function(req, res) {
     res.json({ error:false, message: 'Usuario successfully deleted' });
   });
 };
+

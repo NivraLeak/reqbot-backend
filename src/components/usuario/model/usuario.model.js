@@ -10,7 +10,11 @@ var Usuario = function (usuario) {
     this.rol = usuario.rol;
     this.estado = usuario.estado;
 };
-
+const roles = {
+    ADMINISTRADOR: "Administrador",
+    ANALISTA: "Analista",
+    CLIENTE: "CLIENTE"
+}
 Usuario.create = function (newusuario, result) {
     dbConn.query("INSERT INTO usuario set ?", newusuario, function (err, res) {
         if (err) {
@@ -22,7 +26,6 @@ Usuario.create = function (newusuario, result) {
         }
     });
 };
-
 
 Usuario.findById = function (id, result) {
     dbConn.query("Select * from usuario where idusuario = ? ", id, function (err, res) {
@@ -88,4 +91,7 @@ Usuario.findByCorreo = function (correo, result) {
         }
     })
 }
-module.exports = Usuario;
+module.exports = {
+    Usuario,
+    roles
+};
