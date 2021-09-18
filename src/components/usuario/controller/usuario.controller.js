@@ -117,3 +117,42 @@ exports.changeToInactive = (req, res) => {
     })
 }
 
+exports.changePassword = async (req, res) => {
+    let user;
+    Usuario.findByCorreo(req.body.correo, async (err, usuario) => {
+        if (err) {
+            res.send(err);
+        }else {
+            user = usuario[0];
+            try {
+                const match = await bcrypt.compare(req.body.contrasenia, user.contrasenia);
+                if (match){
+                    const hashedPassword = await bcrypt.hash(req.body.newcontrasenia,10)
+                    user.contrasenia = hashedPassword;
+                    Usuario.changePassword(user,  (err, result) =>{
+                        if (err){
+                            res.send(err);
+                        }else {
+                            res.json({
+                                message: "Success password change"
+                            })
+                        }
+                    })
+                }else {
+                    res.send('Not allowed, invalid credentials')
+                }
+            } catch (err) {
+                console.log(err);
+                res.status(400).json(
+                    {
+                        message: 'Cannot find user',
+                        err: err
+                    }
+                );
+            }
+        }
+
+    })
+
+
+}

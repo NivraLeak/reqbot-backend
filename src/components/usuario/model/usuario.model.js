@@ -42,9 +42,8 @@ Usuario.findAll = function (result) {
     dbConn.query("Select * from usuario", function (err, res) {
         if (err) {
             console.log("error: ", err);
-            result(null, err);
+            result(err, null);
         } else {
-            console.log('usuario : ', res);
             result(null, res);
         }
     });
@@ -63,7 +62,7 @@ Usuario.update = function (id, usuario, result) {
         function (err, res) {
             if (err) {
                 console.log("error: ", err);
-                result(null, err);
+                result(err, null);
             } else {
                 result(null, res);
             }
@@ -101,6 +100,18 @@ Usuario.findByCorreo = function (correo, result) {
         }
     })
 }
+
+Usuario.changePassword = function (user,result) {
+    dbConn.query("UPDATE `bdreqbot`.`usuario` SET `contrasenia` = ? WHERE (`idUsuario` = ?);",[user.contrasenia,user.idUsuario],function (err,res){
+        if (!err) {
+            result(null, res);
+        } else {
+            console.log("Error in find by user")
+            result(err, null);
+        }
+    })
+}
+
 module.exports = {
     Usuario,
     roles

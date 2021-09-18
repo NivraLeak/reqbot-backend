@@ -25,6 +25,7 @@ router.delete('/:id', usuarioController.delete);
 
 router.get('/inactive/:id', usuarioController.changeToInactive);
 
+router.post('/change-password', usuarioController.changePassword);
 
 
 module.exports = router
