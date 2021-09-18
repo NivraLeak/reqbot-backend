@@ -23,6 +23,8 @@ router.put('/:id', usuarioController.update);
 // Delete a usuario with id
 router.delete('/:id', usuarioController.delete);
 
+router.get('/inactive/:id', usuarioController.changeToInactive);
+
 
 
 module.exports = router

@@ -108,3 +108,12 @@ exports.delete = function(req, res) {
   });
 };
 
+exports.changeToInactive = (req, res) => {
+    Usuario.changeStateToInactive(req.params.id, (err, result) => {
+        if(err) {
+            res.send(err);
+        }
+        res.json({ error:false, message: 'Usuario inactive' })
+    })
+}
+

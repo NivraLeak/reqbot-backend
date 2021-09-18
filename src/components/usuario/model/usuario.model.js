@@ -80,6 +80,16 @@ Usuario.delete = function (id, result) {
         }
     });
 };
+Usuario.changeStateToInactive = function (id, result) {
+    dbConn.query("UPDATE `bdreqbot`.`usuario` SET `estado` = 'Inactivo' WHERE (`idUsuario` = ?);",[id], (err, res) => {
+        if (err) {
+            console.log("error: ", err)
+            result(null,err)
+        }else {
+            result(null,res)
+        }
+    })
+}
 
 Usuario.findByCorreo = function (correo, result) {
     dbConn.query("Select * from usuario where correo = ? ",correo,function (err,res) {
