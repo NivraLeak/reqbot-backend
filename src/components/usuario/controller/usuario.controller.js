@@ -32,7 +32,7 @@ exports.login = async function (req, res) {
         const user = usuario[0];
         try {
             const match = await bcrypt.compare(req.body.contrasenia, user.contrasenia);
-            const accessToken = jwt.sign(JSON.stringify(user), "my secret key");
+            const accessToken = jwt.sign(JSON.stringify(user), "my_secret_key");
             //console.log(accessToken)
             console.log(req.session)
             if (match) {
