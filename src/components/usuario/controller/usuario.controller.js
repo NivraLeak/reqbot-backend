@@ -3,6 +3,9 @@
 const {Usuario} = require('../model/usuario.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require("nodemailer");
+//const {transporter} = require('../../emailConfig/emailConfig')
+const password = require('password-gen-v1')
 exports.create = async function (req, res) {
     const new_usuario = new Usuario(req.body);
         try{
@@ -75,7 +78,6 @@ exports.findAll = function(req, res) {
 
   });
 };
-
 exports.findById = function(req, res) {
 
     Usuario.findById(req.params.id, function(err, usuario) {
@@ -84,7 +86,6 @@ exports.findById = function(req, res) {
         res.json(usuario);
     });
 };
-
 
 exports.update = function(req, res) {
     if(req.body.constructor === Object && Object.keys(req.body).length === 0){
@@ -98,7 +99,6 @@ exports.update = function(req, res) {
     }
 
 };
-
 
 exports.delete = function(req, res) {
     Usuario.delete( req.params.id, function(err, usuario) {
@@ -150,6 +150,69 @@ exports.changePassword = async (req, res) => {
                     }
                 );
             }
+        }
+
+    })
+
+
+}
+
+exports.recoveryPasswordByAddress = async (req, res) => {
+    let user;
+    let jsonRecovery = req.body;
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true, // true for 465, false for other ports
+        auth: {
+            user: 'warnecklek@gmail.com', // ethereal user
+            pass: 'hoxlvrggqschtdpt', // ethereal password
+        },
+    });
+    Usuario.findByCorreo(jsonRecovery.correo, async (err, usuario) => {
+        if (err) {
+            res.send(err);
+        }else {
+            user = usuario[0];
+            try{
+                if (jsonRecovery.correo === user.correo){
+                    const pass = password.newPassword(4)
+                    const msg = {
+                        from: '"The Exapress App" <example.example4@example.com>', // sender address
+                        to: `${jsonRecovery.correo}`, // list of receivers
+                        subject: "Recuperacion de contraseña", // Subject line
+                        text: "Se brinda su nueva contraseña, se le recomienda cambiar la contraseña una vez leido este correo." +
+                            `Contraseña: ${pass}`, // plain text body
+                    }
+
+                    const hashedPassword = await bcrypt.hash(pass,10)
+                    user.contrasenia = hashedPassword;
+                    Usuario.changePassword(user,  async (err, result) => {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                                const info = await transporter.sendMail(msg);
+
+                                console.log("Message sent: %s", info.messageId);
+                                // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+                                // Preview only available when sending through an Ethereal account
+                                console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+                                // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+
+                                res.send('Email Sent!')
+                        }
+                    })
+
+                }else {
+                    res.send('Not allowed, invalid credentials')
+                }
+            }catch (e){
+                res.send('Not allowed, invalid credentials')
+            }
+
+
+
         }
 
     })

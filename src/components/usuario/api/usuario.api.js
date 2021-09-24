@@ -6,7 +6,7 @@ const { ensureToken, authAdmin} = require("../../auth/auth");
 //login
 router.post('/login',usuarioController.login);
 //logOut
-router.get('/logout',usuarioController.logOut);
+router.get('/logout',ensureToken,usuarioController.logOut);
 
 // Create a new usuario
 router.post('/', usuarioController.create);
@@ -25,6 +25,8 @@ router.delete('/:id', usuarioController.delete);
 router.get('/inactive/:id', usuarioController.changeToInactive);
 
 router.post('/change-password', usuarioController.changePassword);
+
+router.post('/recovery-password', usuarioController.recoveryPasswordByAddress);
 
 
 module.exports = router
