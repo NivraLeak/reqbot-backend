@@ -18,4 +18,9 @@ router.put('/:id', historiausuarioController.update);
 // Delete a historiausuario with id
 router.delete('/:id', historiausuarioController.delete);
 
+// Get user histories with id project
+router.get('/project/:id', historiausuarioController.getByIdProject);
+
+router.get('/download/project/:id', historiausuarioController.downloadPromise);
+
 module.exports = router

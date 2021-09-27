@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.2/pdfmake.js" integrity="sha512-tuO/qzp/juZ/CXz4umKTfKcYTd63a0hQkw1P4gOMoVvB/DwqTicAjg4FpW8eqbNwwS28vzngdWrVSRM+qqBxrA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.2/vfs_fonts.js" integrity="sha512-cktKDgjEiIkPVHYbn8bh/FEyYxmt4JDJJjOCu5/FQAkW4bc911XtKYValiyzBiJigjVEvrIAyQFEbRJZyDA1wQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js" integrity="sha512-xQBQYt9UcgblF6aCMrwU1NkVA7HCXaSN2oq0so80KO+y68M+n64FOcqgav4igHe6D5ObBLIf68DWv+gfBowczg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js" integrity="sha512-NOmoi96WK3LK/lQDDRJmrobxa+NMwVzHHAaLfxdy0DRHIBc6GZ44CRlYDmAKzg9j7tvq3z+FGRlJ4g+3QC2qXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<body>
+<button id="bttPdf">To pdf</button>
+<button id="bttZip">To zip</button>
+<button id="bttZipAllPds">To zip all pdfs</button>
+</body>
+<script>
+    const buttonPdf = document.getElementById("bttPdf");
+    buttonPdf.addEventListener("click", downloadPdf)
+
+    const buttonZip = document.getElementById("bttZip");
+    buttonZip.addEventListener("click", downloadPdfToZip)
+
+    const buttonZipAllPds = document.getElementById("bttZipAllPds");
+    buttonZipAllPds.addEventListener("click", downloadPdfToAllZip)
+
+    var docDefinition = {
+        content:[
+            "Hellow world"
+        ]
+    }
+    function downloadPdf() {
+        fetch("http://localhost:5000/api/historiausuario/download/1")
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+
+                pdfMake.createPdf(data).download();
+            })
+            .catch(e => console.log(e))
+    }
+
+    function downloadPdfToZip() {
+        fetch("http://localhost:5000/api/historiausuario/download/1")
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                var zip = new JSZip();
+                var pdf = pdfMake.createPdf(data)
+
+                pdf.getBase64((content) => {
+                    //zip.file(content, {base64: true});
+                    var img = zip.folder("pdfHistories");
+                    var pdffile = content;
+                    img.file("pdf01.pdf", pdffile, {base64: true});
+                    zip.generateAsync({type:"blob"})
+                        .then(function(data) {
+                            saveAs(data, "example.zip");
+                        });
+                })
+            })
+            .catch(e => console.log(e))
+    }
+
+    async function getBase64ForOne(data) {
+        var pdf = pdfMake.createPdf(data)
+
+        return new Promise(async (resolve, reject) => {
+            pdf.getBase64((content) => {
+                resolve(content);
+            })
+        })
+    }
+
+    function downloadPdfToAllZip() {
+        fetch("http://localhost:5000/api/historiausuario/download/project/1")
+            .then(res => res.json())
+            .then(async data => {
+                console.log(data)
+                var zip = new JSZip();
+                var pdf = pdfMake.createPdf(data)
+                var dataFormat64 = []
+                //Create folder
+                var folderUh = zip.folder("pdfHistories");
+                for (let uh in data) {
+                    let pdffile = await getBase64ForOne(data[uh]);
+                    dataFormat64.push(pdffile);
+                    folderUh.file(`pdf0${uh}.pdf`, pdffile, {base64: true});
+                }
+
+                //Zip generate the file comprim
+                zip.generateAsync({type:"blob"})
+                    .then(function(data) {
+                        saveAs(data, "example.zip");
+                    });
+
+                console.log(dataFormat64)
+            })
+            .catch(e => console.log(e))
+
+
+    }
+</script>
+</html>

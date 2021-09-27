@@ -25,7 +25,10 @@ app.use(session({
   cookie: { maxAge: oneDay },
   resave: false
 }));
+var cors = require('cors')
 
+
+app.use(cors())
 app.use('/api/historiausuario', historiaUsuarioRoutes)
 //app.use("/api/logs", logsRoutes);
 app.use('/api/organizacion', organizacionRoutes)

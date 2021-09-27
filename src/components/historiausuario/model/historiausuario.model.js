@@ -26,7 +26,8 @@ HistoriaUsuario.create = function (newhistoriausuario, result) {
 
 
 HistoriaUsuario.findById = function (id, result) {
-    dbConn.query("Select * from historiausuario where idHistoriaUsuario = ? ", id, function (err, res) {
+    dbConn.query("Select * from bdreqbot.historiausuario where idHistoriaUsuario = ? ", id, function (err, res) {
+        console.log("ID: ", id)
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -37,10 +38,10 @@ HistoriaUsuario.findById = function (id, result) {
 };
 
 HistoriaUsuario.findAll = function (result) {
-    dbConn.query("Select * from historiausuario", function (err, res) {
+    dbConn.query("Select * from bdreqbot.historiausuario", function (err, res) {
         if (err) {
             console.log("error: ", err);
-            result(null, err);
+            result(err, null);
         } else {
             console.log('historiausuario : ', res);
             result(null, res);
@@ -80,5 +81,32 @@ HistoriaUsuario.delete = function (id, result) {
     });
 };
 
+HistoriaUsuario.findByIdProject = function (id, result) {
+    dbConn.query("Select * from bdreqbot.historiausuario where idProyecto = ? ", id, function (err, res) {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+        } else {
+            result(null, res);
+        }
+    });
+};
 
-module.exports = HistoriaUsuario;
+HistoriaUsuario.findByIdProjectPromise = async function (id) {
+    return new  Promise( async (resolve,reject) => {
+        dbConn.query("Select * from bdreqbot.historiausuario where idProyecto = ? ", id, function (err, res) {
+            if (err) {
+                console.log("error: ", err);
+                return reject(err);
+            } else {
+                return resolve(res);
+            }
+        });
+    })
+
+};
+
+module.exports = {
+    HistoriaUsuario
+
+};

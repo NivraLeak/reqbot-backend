@@ -38,6 +38,19 @@ Usuario.findById = function (id, result) {
     });
 };
 
+Usuario.findByIdPromise = async function (id) {
+    return new  Promise( async (resolve,reject) => {
+        dbConn.query("Select * from usuario where idusuario = ? ", id, function (err, res) {
+            if (err) {
+                console.log("error: ", err);
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        });
+    })
+};
+
 Usuario.findAll = function (result) {
     dbConn.query("Select * from usuario", function (err, res) {
         if (err) {
